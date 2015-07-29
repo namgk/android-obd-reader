@@ -104,6 +104,7 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
   private static final int BLUETOOTH_DISABLED = 1;
   private static final int START_LIVE_DATA = 2;
   private static final int STOP_LIVE_DATA = 3;
+  private static final int SHOW_MAP = 12;
   private static final int SETTINGS = 4;
   private static final int GET_DTC = 5;
   private static final int TABLE_ROW_MARGIN = 7;
@@ -424,6 +425,7 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
+    menu.add(0, SHOW_MAP, 0, getString(R.string.menu_show_map));
     menu.add(0, START_LIVE_DATA, 0, getString(R.string.menu_start_live_data));
     menu.add(0, STOP_LIVE_DATA, 0, getString(R.string.menu_stop_live_data));
     menu.add(0, GET_DTC, 0, getString(R.string.menu_get_dtc));
@@ -453,6 +455,9 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
         return true;
       case TRIPS_LIST:
         startActivity(new Intent(this, TripListActivity.class));
+        return true;
+      case SHOW_MAP:
+        startActivity(new Intent(this, MapActivity.class));
         return true;
       // case COMMAND_ACTIVITY:
       // staticCommand();
