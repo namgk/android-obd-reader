@@ -16,17 +16,16 @@ package com.github.pires.obd.reader.net;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.POST;
-import retrofit.http.PUT;
 
 /**
  * Definition of REST service available in OBD Server.
  */
 public interface ObdService {
 
-  @PUT("/")
-  Response uploadReading(@Body ObdReading reading);
+    @POST("/")
+    Response uploadReading(@Body ObdReading reading);
 
-  @POST("/Data")
-  Response uploadBulkReadings(@Body ObdReading[] readings);
+    @POST("/bulk")
+    Response uploadBulkReadings(@Body ObdReading[] readings);
 
 }

@@ -15,114 +15,114 @@ package com.github.pires.obd.reader.net;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * DTO for OBD readings.
  */
 public class ObdReading {
-  private double latitude, longitude, altitude;
-  private long timestamp;
-  private float accuracy;
-  private float bearing;
+    private double latitude, longitude, altitude;
+    private long timestamp;
+    private float accuracy;
+    private float bearing;
+    private String vehicleid; // vehicle id
+    private Map<String, String> readings;
 
-  private String vin; // vehicle id
-  private Map<String, String> readings;
 
-  public ObdReading(){
-    readings = new HashMap<>();
-  }
+    public ObdReading() {
+        readings = new HashMap<>();
+    }
 
-  public ObdReading(double latitude, double longitude, long timestamp,
-                    String vin, Map<String, String> readings) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.timestamp = timestamp;
-    this.vin = vin;
-    this.readings = readings;
-  }
+    public ObdReading(double latitude, double longitude, double altitude, long timestamp,
+                      String vehicleid, Map<String, String> readings) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+        this.timestamp = timestamp;
+        this.vehicleid = vehicleid;
+        this.readings = readings;
+    }
 
-  public ObdReading(double latitude, double longitude, long timestamp, String vin, Map<String, String> readings, double altitude, float accuracy, float bearing) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.altitude = altitude;
-    this.timestamp = timestamp;
-    this.accuracy = accuracy;
-    this.bearing = bearing;
-    this.vin = vin;
-    this.readings = readings;
-  }
+    public ObdReading(double latitude, double longitude, double altitude, long timestamp, String vin, Map<String, String> readings, float accuracy, float bearing) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+        this.timestamp = timestamp;
+        this.accuracy = accuracy;
+        this.bearing = bearing;
+        this.vehicleid = vin;
+        this.readings = readings;
+    }
+    public void setAccuracy(float accuracy) {
+        this.accuracy = accuracy;
+    }
 
-  public void setAccuracy(float accuracy) {
-    this.accuracy = accuracy;
-  }
+    public void setBearing(float bearing) {
+        this.bearing = bearing;
+    }
 
-  public void setBearing(float bearing) {
-    this.bearing = bearing;
-  }
+    public float getBearing() {
+        return bearing;
+    }
 
-  public float getBearing() {
+    public float getAccuracy() {
+        return accuracy;
+    }
 
-    return bearing;
-  }
+    public double getLatitude() {
+        return latitude;
+    }
 
-  public float getAccuracy() {
-    return accuracy;
-  }
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
-  public void setAltitude(double altitude) {
-    this.altitude = altitude;
-  }
+    public double getAltitude() {
+        return altitude;
+    }
 
-  public double getAltitude() {
-    return altitude;
-  }
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+    }
 
-  public double getLatitude() {
-    return latitude;
-  }
-  public void setLatitude(double latitude) {
-    this.latitude = latitude;
-  }
+    public double getLongitude() {
+        return longitude;
+    }
 
-  public double getLongitude() {
-    return longitude;
-  }
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
-  }
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-  public long getTimestamp() {
-    return timestamp;
-  }
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-  public void setTimestamp(long timestamp) {
-    this.timestamp = timestamp;
-  }
+    public String getVin() {
+        return vehicleid;
+    }
 
-  public String getVin() {
-    return vin;
-  }
+    public void setVin(String vehicleid) {
+        this.vehicleid = vehicleid;
+    }
 
-  public void setVin(String vin) {
-    this.vin = vin;
-  }
+    public Map<String, String> getReadings() {
+        return readings;
+    }
 
-  public Map<String, String> getReadings() {
-    return readings;
-  }
+    public void setReadings(Map<String, String> readings) {
+        this.readings = readings;
+    }
 
-  public void setReadings(Map<String, String> readings) {
-    this.readings = readings;
-  }
-  
-  public String toString(){
+    public String toString() {
 
-    return "lat:" + latitude + ";" +
-            "long:" + longitude + ";" +
-            "vin:" + vin + ";" +
-            "readings:" + readings.toString().substring(10).replace("}","").replace(",",";");
-  }
+        return "lat:" + latitude + ";" +
+                "long:" + longitude + ";" +
+                "alt:" + altitude + ";" +
+                "vehicleid:" + vehicleid + ";" +
+                "readings:" + readings.toString().substring(10).replace("}", "").replace(",", ";");
+    }
 
 }
