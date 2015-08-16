@@ -18,6 +18,8 @@
     <string name="dialog_loading_title">Loading…</string>
     <string name="dialog_loading_body">Loading application View, please wait…</string>
     <string name="menu_show_map">Show Map</string>
+    <string name="menu_login">Log In</string>
+    <string name="menu_logout">Log Out</string>
     <string name="menu_start_live_data">Start Live Data</string>
     <string name="menu_stop_live_data">Stop Live Data</string>
     <string name="menu_settings">Settings</string>
@@ -105,4 +107,6 @@
     <string name="pref_dirname_summary">Name of the directory where to save the files</string>
     <string name="title_activity_map">Map</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_awoejfoawejf">Map</string>
 </resources>

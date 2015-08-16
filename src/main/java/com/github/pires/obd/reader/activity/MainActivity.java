@@ -39,24 +39,15 @@ import com.github.pires.obd.commands.SpeedObdCommand;
 import com.github.pires.obd.commands.engine.EngineRPMObdCommand;
 import com.github.pires.obd.commands.engine.EngineRuntimeObdCommand;
 import com.github.pires.obd.enums.AvailableCommandNames;
-import com.github.pires.obd.reader.io.LogCSVWriter;
-import com.google.inject.Inject;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.github.pires.obd.reader.io.ObdProgressListener;
 import com.github.pires.obd.reader.R;
 import com.github.pires.obd.reader.config.ObdConfig;
 import com.github.pires.obd.reader.io.AbstractGatewayService;
+import com.github.pires.obd.reader.io.LogCSVWriter;
 import com.github.pires.obd.reader.io.MockObdGatewayService;
 import com.github.pires.obd.reader.io.ObdCommandJob;
 import com.github.pires.obd.reader.io.ObdGatewayService;
 import com.github.pires.obd.reader.io.ObdProgressListener;
+import com.github.pires.obd.reader.net.DataCompressor;
 import com.github.pires.obd.reader.net.ObdReading;
 import com.github.pires.obd.reader.net.ObdService;
 import com.github.pires.obd.reader.trips.TripLog;
@@ -64,6 +55,7 @@ import com.github.pires.obd.reader.trips.TripRecord;
 import com.google.inject.Inject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +97,8 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
   private static final int START_LIVE_DATA = 2;
   private static final int STOP_LIVE_DATA = 3;
   private static final int SHOW_MAP = 12;
+  private static final int LOGIN = 13;
+  private static final int LOGOUT = 14;
   private static final int SETTINGS = 4;
   private static final int GET_DTC = 5;
   private static final int TABLE_ROW_MARGIN = 7;
@@ -157,10 +151,17 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
 
         double lat = 0;
         double lon = 0;
+        double alt = 0;
+        float accu = 0;
+        float bearing = 0;
+
         final int posLen = 7;
         if (mGpsIsStarted && mLastLocation != null) {
           lat = mLastLocation.getLatitude();
           lon = mLastLocation.getLongitude();
+          alt = mLastLocation.getAltitude();
+          accu = mLastLocation.getAccuracy();
+          bearing = mLastLocation.getBearing();
 
           StringBuffer sb = new StringBuffer();
           sb.append("Lat: ");
@@ -174,7 +175,7 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
           final String vin = prefs.getString(ConfigActivity.VEHICLE_ID_KEY, "UNDEFINED_VIN");
           Map<String, String> temp = new HashMap<String, String>();
           temp.putAll(commandResult);
-          ObdReading reading = new ObdReading(lat, lon, System.currentTimeMillis(), vin, temp);
+          ObdReading reading = new ObdReading(lat, lon, System.currentTimeMillis(), vin, temp, alt, accu, bearing);
           new UploadAsyncTask().execute(reading);
 
         } else if (prefs.getBoolean(ConfigActivity.ENABLE_FULL_LOGGING_KEY, false)){
@@ -291,7 +292,7 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
       TextView existingTV = (TextView) vv.findViewWithTag(cmdID);
       existingTV.setText(cmdResult);
     } else addTableRow(cmdID, cmdName, cmdResult);
-    commandResult.put(cmdID, cmdResult);
+    commandResult.put(DataCompressor.compressCmdMap.get(cmdID), cmdResult);
     updateTripStatistic(job, cmdID);
   }
 
@@ -426,6 +427,8 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
 
   public boolean onCreateOptionsMenu(Menu menu) {
     menu.add(0, SHOW_MAP, 0, getString(R.string.menu_show_map));
+    menu.add(0, LOGIN, 0, getString(R.string.menu_login));
+    menu.add(0, LOGOUT, 0, getString(R.string.menu_logout));
     menu.add(0, START_LIVE_DATA, 0, getString(R.string.menu_start_live_data));
     menu.add(0, STOP_LIVE_DATA, 0, getString(R.string.menu_stop_live_data));
     menu.add(0, GET_DTC, 0, getString(R.string.menu_get_dtc));
@@ -457,7 +460,15 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
         startActivity(new Intent(this, TripListActivity.class));
         return true;
       case SHOW_MAP:
-        startActivity(new Intent(this, MapActivity.class));
+        startActivity(new Intent(this, MapsActivity.class));
+        return true;
+      case LOGIN:
+        startActivity(new Intent(this, LoginActivity.class));
+        return true;
+      case LOGOUT:
+        SharedPreferences.Editor e = prefs.edit();
+        e.putString("token", "");
+        e.commit();
         return true;
       // case COMMAND_ACTIVITY:
       // staticCommand();
@@ -553,6 +564,12 @@ public class MainActivity extends RoboActivity implements ObdProgressListener, L
     MenuItem stopItem = menu.findItem(STOP_LIVE_DATA);
     MenuItem settingsItem = menu.findItem(SETTINGS);
     MenuItem getDTCItem = menu.findItem(GET_DTC);
+    MenuItem loginItem = menu.findItem(LOGIN);
+    MenuItem logoutItem = menu.findItem(LOGOUT);
+
+    String token = prefs.getString("token","");
+    loginItem.setEnabled(token.length() != 32);
+    logoutItem.setEnabled(token.length() == 32);
 
     if (service != null && service.isRunning()) {
       getDTCItem.setEnabled(false);

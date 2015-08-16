@@ -21,8 +21,11 @@ import java.util.regex.Pattern;
  * DTO for OBD readings.
  */
 public class ObdReading {
-  private double latitude, longitude;
+  private double latitude, longitude, altitude;
   private long timestamp;
+  private float accuracy;
+  private float bearing;
+
   private String vin; // vehicle id
   private Map<String, String> readings;
 
@@ -39,10 +42,45 @@ public class ObdReading {
     this.readings = readings;
   }
 
+  public ObdReading(double latitude, double longitude, long timestamp, String vin, Map<String, String> readings, double altitude, float accuracy, float bearing) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.altitude = altitude;
+    this.timestamp = timestamp;
+    this.accuracy = accuracy;
+    this.bearing = bearing;
+    this.vin = vin;
+    this.readings = readings;
+  }
+
+  public void setAccuracy(float accuracy) {
+    this.accuracy = accuracy;
+  }
+
+  public void setBearing(float bearing) {
+    this.bearing = bearing;
+  }
+
+  public float getBearing() {
+
+    return bearing;
+  }
+
+  public float getAccuracy() {
+    return accuracy;
+  }
+
+  public void setAltitude(double altitude) {
+    this.altitude = altitude;
+  }
+
+  public double getAltitude() {
+    return altitude;
+  }
+
   public double getLatitude() {
     return latitude;
   }
-
   public void setLatitude(double latitude) {
     this.latitude = latitude;
   }

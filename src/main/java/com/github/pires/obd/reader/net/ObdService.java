@@ -15,6 +15,7 @@ package com.github.pires.obd.reader.net;
 
 import retrofit.client.Response;
 import retrofit.http.Body;
+import retrofit.http.POST;
 import retrofit.http.PUT;
 
 /**
@@ -24,5 +25,8 @@ public interface ObdService {
 
   @PUT("/")
   Response uploadReading(@Body ObdReading reading);
+
+  @POST("/Data")
+  Response uploadBulkReadings(@Body ObdReading[] readings);
 
 }
